@@ -1,0 +1,35 @@
+[general]
+context=default
+allowguest=no
+bindport=5060
+bindaddr=0.0.0.0
+srvlookup=yes
+;transport=udp,ws,wss ; For WebRTC (we'll set this up later)
+rtcachefriends=yes
+
+; Extension 1001
+[1001]
+type=friend
+context=internal
+host=dynamic
+secret=password1001  ; Use STRONG passwords in production!
+disallow=all
+allow=ulaw
+allow=alaw
+;allow=opus ; For WebRTC
+;dtlsenable=yes ; For WebRTC
+;dtlsverify=fingerprint ; For WebRTC
+;dtlscertfile=/etc/asterisk/keys/asterisk.pem ; For WebRTC
+;dtlsprivatekey=/etc/asterisk/keys/asterisk.key ; For WebRTC
+;encryption=yes ; For WebRTC
+
+; Extension 1002
+[1002]
+type=friend
+context=internal
+host=dynamic
+secret=password1002  ; Use STRONG passwords in production!
+disallow=all
+allow=ulaw
+allow=alaw
+;allow=opus ; For WebRTC

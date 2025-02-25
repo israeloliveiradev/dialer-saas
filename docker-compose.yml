@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      NODE_ENV: development # Change to 'production' in deployment
+    networks:
+      - app-network
+
+
+  asterisk:
+    image: andrius/asterisk 
+    restart: always
+    ports:
+      - "5060:5060/udp" # SIP port
+      - "10000-10020:10000-10020/udp"  # RTP ports (adjust range as needed)
+    volumes:
+      - ./asterisk-config:/etc/asterisk  # Mount configuration files
+    networks:
+      - app-network
+    depends_on:
+      - backend # Ensures Asterisk starts after the backend (though they'll interact later via AGI)
+    privileged: true # Required by some Asterisk features. Use with caution, and consider alternatives in production.
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
